@@ -70,12 +70,6 @@ class Area():
     ammo_drop_special = 0
     ammo_drop_heavy = 0
 
-def weaponlookup(weapon_type,weapon_name,max_clip,max_ammo,rarity,damage):
-    print("Name: %s" % weapon_name)
-    print("Type: %s" % weapon_type)
-    print("Rarity: %s" % rarity)
-    print("Damage: %d" % damage)
-
 class Inventory():
     # Inventory of dropped engrams
     engram_green = 0
@@ -187,6 +181,13 @@ def list_equipment():
     print("Headgear: %s" % p.head)
     print("Chest: %s" % p.body)
     print("Legs: %s" % p.legs)
+
+def weaponlookup(weapon_name,weapon_type,rarity,damage,max_clip):
+    print("Name: %s" % weapon_name)
+    print("Type: %s" % weapon_type)
+    print("Rarity: %s" % rarity)
+    print("Damage: %d" % damage)
+    print("Max Clip: %d" % max_clip)
 
 print("Welcome to Destiny Loot cave")
 
@@ -301,10 +302,13 @@ while p.health_current > 0:
         else:
             print("Invalid Selection")
     while p.player_status == "equipment":
-        i = input([1]Weapon, [2]Armor)
+        i = input("[1]Weapon, [2]Armor")
         if i == "1":
             print("What would you like to look up?")
             i = input("[1]Primary, [2]Special, [3]Heavy")
             if i == "1":
-                weaponlookup(weapons["primary"][p.primary][name])
-
+                weaponlookup(p.primary,"Primary",weapons["primary"][p.primary]["rarity"],
+                             weapons["primary"][p.primary]["damage"],weapons["primary"][p.primary]["maxclip"])
+            elif i == "2":
+                weaponlookup(p.special, "Special", weapons["special"][p.special]["rarity"],
+                             weapons["special"][p.special]["damage"], weapons["special"][p.special]["maxclip"])
