@@ -6,6 +6,10 @@ class Player():
     health_current = 0
     shield = 5
     shield_current = 0
+    level = 0
+    experience = 0
+    light_level = 0
+    damage = 0
 
     # skills
     grenade = "Sticky Grenade"
@@ -14,11 +18,11 @@ class Player():
 
     # Weapons and ammo
     # Primary
-    primary = "Standard Auto Rifle"
-    primary_ammo = 300
-    primary_ammo_max = 300
-    primary_clip = 30
-    primary_clip_size = 30
+    primary = ""
+    primary_ammo = 0
+    primary_ammo_max = 0
+    primary_clip = 0
+    primary_clip_size = 0
 
     # Special
     special = ""
@@ -49,6 +53,7 @@ class Player():
 
     # What is the player doing
     player_position = ""
+    # what is the player doing
     player_status = ""
 
 
@@ -93,7 +98,7 @@ p.health_current = p.health
 weapons={
     "primary":{
         "Basic Handcannon":{"maxclip":10,"damage":45,"maxammo":100,"rarity":"Normal"},
-        "Basic Auto Rifle":{},
+        "Basic Auto Rifle":{"maxclip":30,"damage":24,"maxammo":300,"rarity":"Normal"},
     },
     "special":{
         "Basic Fusion Cannon":{},
@@ -116,6 +121,7 @@ ability_list = {
     "hunter":{},
 }
 
+# Search for items on the ground after killing enemies in the lootcave
 def search_ground():
     print("You search on the ground for all the sweet sweet loot!")
     if a.items_dropped < 1:
@@ -142,6 +148,7 @@ def search_ground():
         temp_p = 0
         p.player_status = ""
 
+# Throw grenade and check if you can throw
 def grenade():
     if p.grenade_timer == 0:
         print("You toss a %s!" % p.grenade)
@@ -155,7 +162,23 @@ def grenade():
         print("%s is not ready yet!" % p.grenade)
 
 def fire_weapon():
-    return
+    print("Fire weapon not implemented yet")
+
+def equip(weapon_type):
+    if weapon_type == "primary":
+        print("Primary Equip not implemented yet")
+    elif weapon_type == "special":
+        print("Special Equip not implemented yet")
+    elif weapon_type == "heavy":
+        print("Heavy Equip not implemented yet")
+
+def swap_weapon(weapon_type):
+    if weapon_type == "primary":
+        print("Swap Primary not implemented")
+    if weapon_type == "special":
+        print("Swap Special not implemented")
+    if weapon_type == "heavy":
+        print("Swap Heavy not implemented")
 
 def list_equipment():
     print("Primary: %s" % p.primary)
@@ -267,12 +290,21 @@ while p.health_current > 0:
     while p.player_status == "viewingmenu":
         i = input("[1]Stats, [2]Equipment, [3]Inventory, [4]Leave Menu")
         if i == "1":
-            print("Not Implemented")
+            print("Not Implemented(Stats)")
         elif i == "2":
             list_equipment()
+            p.player_status = "equipment"
         elif i == "3":
-            print("Not Implemented")
+            print("Not Implemented(Inventory)")
         elif i == "4":
             p.player_status = ""
         else:
             print("Invalid Selection")
+    while p.player_status == "equipment":
+        i = input([1]Weapon, [2]Armor)
+        if i == "1":
+            print("What would you like to look up?")
+            i = input("[1]Primary, [2]Special, [3]Heavy")
+            if i == "1":
+                weaponlookup(weapons["primary"][p.primary][name])
+
