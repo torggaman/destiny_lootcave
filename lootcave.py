@@ -1,6 +1,7 @@
 from random import randint
 
-class Player():
+
+class Player:
     # Health and shield
     health = 10
     health_current = 0
@@ -39,6 +40,12 @@ class Player():
     heavy_clip_size = 0
 
     currently_equipped = ""
+    currently_equipped_stats = {"current_clip": 0,
+                                "max_clip": 0,
+                                "current_ammo": 0,
+                                "max_ammo": 0,
+                                "damage": 0,
+                                "type": ""}
 
     # Armor
     head = ""
@@ -57,20 +64,22 @@ class Player():
     player_status = ""
 
 
-class Enemy():
+class Enemy:
     # Enemy
     enemy_health_base = 10
     enemy_health_current = 0
     enemy_distance = ""
 
-class Area():
+
+class Area:
     # Items dropped at the lootcave
     items_dropped = 0
     ammo_drop_primary = 0
     ammo_drop_special = 0
     ammo_drop_heavy = 0
 
-class Inventory():
+
+class Inventory:
     # Inventory of dropped engrams
     engram_green = 0
 
@@ -84,36 +93,57 @@ class Inventory():
 
     temp_p = 0
 
-p =  Player()
+p = Player()
 a = Area()
 inv = Inventory()
 p.health_current = p.health
 
-weapons={
-    "primary":{
-        "Basic Handcannon":{"maxclip":10,"damage":45,"maxammo":100,"rarity":"Normal"},
-        "Basic Auto Rifle":{"maxclip":30,"damage":24,"maxammo":300,"rarity":"Normal"},
+weapons = {
+    "primary": {
+        "Basic Handcannon": {"maxclip": 10, "damage": 45, "maxammo": 100, "rarity": "Normal", "type": "Handcannon"},
+        "Basic Auto Rifle": {"maxclip": 30, "damage": 24, "maxammo": 300, "rarity": "Normal", "type": "Auto Rifle"},
     },
-    "special":{
-        "Basic Fusion Cannon":{},
+    "special": {
+        "Basic Fusion Cannon": {},
     },
-    "heavy":{
-        "Basic Rocketlauncher":{},
+    "heavy": {
+        "Basic Rocketlauncher": {},
     }
 }
 
-titan={
-    "subclass":{},
-    "grenade":{},
-    "melee":{},
-    "super":{},
+classes = {
+    "titan": {
+        "striker": {"grenade": {}, "melee": {}, "super": {}, },
+        "defender": {},
+        "solhammer": {}
+        },
+    "warlock": {
+        "sunsigner": {},
+        "voidwalker": {},
+        "stormcaller": {}
+        },
+    "hunter": {
+        "voidstalker": {},
+        "stormblade": {},
+        "gunslinger": {},
+        }
+
 }
 
-ability_list = {
-    "titan":{},
-    "warlock":{},
-    "hunter":{},
+player_inventory = {
+    "primary_inventory": {},
+    "special_inventory": {},
+    "heavy_inventory": {},
+    "consumable_inventory": {}
 }
+
+
+tower_vault = {
+    "weapon": {},
+    "armor": {},
+    "other": {}
+}
+
 
 # Search for items on the ground after killing enemies in the lootcave
 def search_ground():
@@ -137,10 +167,11 @@ def search_ground():
                 inv.engram_purple += 1
         print("You gathered: %d Green engrams, %d Blue Engrams and %d Purple Engrams" %
               (inv.temp_g, inv.temp_b, inv.temp_p))
-        temp_g = 0
-        temp_b = 0
-        temp_p = 0
+        inv.temp_g = 0
+        inv.temp_b = 0
+        inv.temp_p = 0
         p.player_status = ""
+
 
 # Throw grenade and check if you can throw
 def grenade():
@@ -150,13 +181,13 @@ def grenade():
         p.grenade_timer = p.grenade_cooldown
         if randint(1, 50) >= 20:
             a.items_dropped += 1
-        else:
-            return
     else:
         print("%s is not ready yet!" % p.grenade)
 
+
 def fire_weapon():
     print("Fire weapon not implemented yet")
+
 
 def equip(weapon_type):
     if weapon_type == "primary":
@@ -166,6 +197,7 @@ def equip(weapon_type):
     elif weapon_type == "heavy":
         print("Heavy Equip not implemented yet")
 
+
 def swap_weapon(weapon_type):
     if weapon_type == "primary":
         print("Swap Primary not implemented")
@@ -173,6 +205,7 @@ def swap_weapon(weapon_type):
         print("Swap Special not implemented")
     if weapon_type == "heavy":
         print("Swap Heavy not implemented")
+
 
 def list_equipment():
     print("Primary: %s" % p.primary)
@@ -182,12 +215,54 @@ def list_equipment():
     print("Chest: %s" % p.body)
     print("Legs: %s" % p.legs)
 
-def weaponlookup(weapon_name,weapon_type,rarity,damage,max_clip):
+
+def check_full(a):
+    if a == "primary":
+        b = len(player_inventory["primary_inventory"])
+        if b == 9:
+            print("Your Inventory is full.")
+
+
+def weaponlookup(weapon_name, weapon_type, rarity, damage, max_clip):
     print("Name: %s" % weapon_name)
     print("Type: %s" % weapon_type)
     print("Rarity: %s" % rarity)
     print("Damage: %d" % damage)
     print("Max Clip: %d" % max_clip)
+
+
+def search_ammo():
+    if a.ammo_drop_primary == 0 | a.ammo_drop_special == 0 | a.ammo_drop_heavy == 0:
+        print("Looks like there is no ammo dropped")
+    if p.primary_ammo < p.primary_ammo_max:
+        if a.ammo_drop_primary > 0:
+            p.primary_ammo += a.ammo_drop_primary
+            if p.primary_ammo > p.primary_ammo_max:
+                p.primary_ammo = p.primary_ammo_max
+    if p.special_ammo < p.special_ammo_max:
+        if a.ammo_drop_special > 0:
+            p.special_ammo += a.ammo_drop_special
+            if p.special_ammo > p.special_ammo_max:
+                p.special_ammo = p.special_ammo_max
+    if p.heavy_ammo < p.heavy_ammo_max:
+        if a.ammo_drop_heavy > 0:
+            p.heavy_ammo += a.ammo_drop_heavy
+            if p.heavy_ammo > p.heavy_ammo_max:
+                p.heavy_ammo = p.heavy_ammo_max
+    print("You start looking for ammo")
+
+
+def player_ui():
+    print("Heath: %d/%d, Shield: %d/%d, Weapon: %s, Clip: %d/%d, Ammo: %d/%d" % (p.health_current,
+                                                                                 p.health,
+                                                                                 p.shield_current,
+                                                                                 p.shield,
+                                                                                 p.currently_equipped,
+                                                                                 p.currently_equipped_stats["current_clip"],
+                                                                                 p.currently_equipped_stats["max_clip"],
+                                                                                 p.currently_equipped_stats["current_ammo"],
+                                                                                 p.currently_equipped_stats["max_ammo"],))
+
 
 print("Welcome to Destiny Loot cave")
 
@@ -255,24 +330,7 @@ while p.health_current > 0:
         elif i == "3":
             print("You chose 3")
         elif i == "4":
-            if a.ammo_drop_primary == 0 | a.ammo_drop_special == 0 | a.ammo_drop_heavy == 0:
-                print("Looks like there is no ammo dropped")
-            if p.primary_ammo < p.primary_ammo_max:
-                if a.ammo_drop_primary > 0:
-                    p.primary_ammo += a.ammo_drop_primary
-                    if p.primary_ammo > p.primary_ammo_max:
-                        p.primary_ammo = p.primary_ammo_max
-            if p.special_ammo < p.special_ammo_max:
-                if a.ammo_drop_special > 0:
-                    p.special_ammo += a.ammo_drop_special
-                    if p.special_ammo > p.special_ammo_max:
-                        p.special_ammo = p.special_ammo_max
-            if p.heavy_ammo < p.heavy_ammo_max:
-                if a.ammo_drop_heavy > 0:
-                    p.heavy_ammo += a.ammo_drop_heavy
-                    if p.heavy_ammo > p.heavy_ammo_max:
-                        p.heavy_ammo = p.heavy_ammo_max
-            print("You start looking for ammo")
+            search_ammo()
         elif i == "5":
             p.player_status = ""
     while p.player_status == "decrypting":
@@ -305,10 +363,17 @@ while p.health_current > 0:
         i = input("[1]Weapon, [2]Armor")
         if i == "1":
             print("What would you like to look up?")
-            i = input("[1]Primary, [2]Special, [3]Heavy")
+            i = input("[1]Primary, [2]Special, [3]Heavy, [4]Go Back")
             if i == "1":
-                weaponlookup(p.primary,"Primary",weapons["primary"][p.primary]["rarity"],
-                             weapons["primary"][p.primary]["damage"],weapons["primary"][p.primary]["maxclip"])
+                weaponlookup(p.primary, "Primary", weapons["primary"][p.primary]["rarity"],
+                             weapons["primary"][p.primary]["damage"], weapons["primary"][p.primary]["maxclip"])
             elif i == "2":
                 weaponlookup(p.special, "Special", weapons["special"][p.special]["rarity"],
                              weapons["special"][p.special]["damage"], weapons["special"][p.special]["maxclip"])
+            elif i == "3":
+                weaponlookup(p.heavy, "Heavy", weapons["heavy"][p.heavy]["rarity"],
+                             weapons["heavy"][p.heavy]["damage"], weapons["heavy"][p.heavy]["maxclip"])
+            elif i == "4":
+                p.player_status = "viewingmenu"
+            else:
+                print("invalid selection")
