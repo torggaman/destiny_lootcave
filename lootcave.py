@@ -114,29 +114,30 @@ weapons = {
 classes = {
     "titan": {
         "striker": {"grenade": {}, "melee": {}, "super": {}, },
-        "defender": {},
-        "solhammer": {}
+        "defender": {"grenade": {}, "melee": {}, "super": {}, },
+        "solhammer": {"grenade": {}, "melee": {}, "super": {}, }
         },
     "warlock": {
-        "sunsigner": {},
-        "voidwalker": {},
-        "stormcaller": {}
+        "sunsigner": {"grenade": {}, "melee": {}, "super": {}, },
+        "voidwalker": {"grenade": {}, "melee": {}, "super": {}, },
+        "stormcaller": {"grenade": {}, "melee": {}, "super": {}, }
         },
     "hunter": {
-        "voidstalker": {},
-        "stormblade": {},
-        "gunslinger": {},
+        "voidstalker": {"grenade": {}, "melee": {}, "super": {}, },
+        "stormblade": {"grenade": {}, "melee": {}, "super": {}, },
+        "gunslinger": {"grenade": {}, "melee": {}, "super": {}, },
         }
 
 }
 
 player_inventory = {
-    "primary_inventory": {},
-    "special_inventory": {},
-    "heavy_inventory": {},
-    "consumable_inventory": {}
+    "primary_inventory": [],
+    "special_inventory": [],
+    "heavy_inventory": [],
+    "consumable_inventory": {"item1": 0}
 }
 
+comsumables = {}
 
 tower_vault = {
     "weapon": {},
@@ -188,16 +189,51 @@ def grenade():
 def fire_weapon():
     print("Fire weapon not implemented yet")
 
-
-def equip(weapon_type):
+def check_ammo_equipping(weapon_type):
     if weapon_type == "primary":
-        print("Primary Equip not implemented yet")
+        if p.primary_ammo > p.primary_clip_size:
+            p.primary_clip = p.primary_clip_size
+            p.primary_ammo = p.primary_ammo - p.primary_clip_size
+        elif p.primary_ammo <= p.primary_clip_size:
+            p.primary_clip = p.primary_ammo
+            p.primary_ammo = 0
     elif weapon_type == "special":
-        print("Special Equip not implemented yet")
+        if p.special_ammo > p.special_clip_size:
+            p.special_clip = p.special_clip_size
+            p.special_ammo = p.special_ammo - p.special_clip_size
+        elif p.special_ammo <= p.special_clip_size:
+            p.special_clip = p.special_ammo
+            p.special_ammo = 0
     elif weapon_type == "heavy":
-        print("Heavy Equip not implemented yet")
+        if p.heavy_ammo > p.heavy_clip_size:
+            p.heavy_clip = p.heavy_clip_size
+            p.heavy_ammo = p.heavy_ammo - p.heavy_clip_size
+        elif p.heavy_ammo <= p.heavy_clip_size:
+            p.heavy_clip = p.heavy_ammo
+            p.heavy_ammo = 0
 
 
+# Equip a specific weapon from inventory
+def equip(weapon_type):
+    while p.player_status == "equipping":
+        if weapon_type == "primary":
+            print(player_inventory["primary_inventory"])
+            i = input("Type a name above>")
+            wtype = player_inventory["primary_inventory"]
+            if i == wtype:
+                p.currently_equipped = wtype[i]
+                p.primary = i
+                p.primary_ammo_max = wtype[i]["maxammo"]
+                p.primary_clip_size = wtype[i]["maxclip"]
+                p.damage = wtype[i]["damage"]
+                check_ammo_equipping("primary")
+        elif weapon_type == "special":
+            print("Special Equip not implemented yet")
+        elif weapon_type == "heavy":
+            print("Heavy Equip not implemented yet")
+
+
+# Swap between currently equipped weapons
 def swap_weapon(weapon_type):
     if weapon_type == "primary":
         print("Swap Primary not implemented")
@@ -219,8 +255,25 @@ def list_equipment():
 def check_full(a):
     if a == "primary":
         b = len(player_inventory["primary_inventory"])
-        if b == 9:
-            print("Your Inventory is full.")
+        if b >= 9:
+            print("Primary Inventory full.")
+            return True
+        else:
+            return False
+    if a == "special":
+        b = len(player_inventory["special_inventory"])
+        if b >= 9:
+            print("Special inventory full.")
+            return True
+        else:
+            return False
+    if a == "heavy":
+        b = len(player_inventory["heavy_inventory"])
+        if b >= 9:
+            print("Heavy inventory full.")
+            return True
+        else:
+            return False
 
 
 def weaponlookup(weapon_name, weapon_type, rarity, damage, max_clip):
@@ -253,15 +306,15 @@ def search_ammo():
 
 
 def player_ui():
-    print("Heath: %d/%d, Shield: %d/%d, Weapon: %s, Clip: %d/%d, Ammo: %d/%d" % (p.health_current,
-                                                                                 p.health,
-                                                                                 p.shield_current,
-                                                                                 p.shield,
-                                                                                 p.currently_equipped,
-                                                                                 p.currently_equipped_stats["current_clip"],
-                                                                                 p.currently_equipped_stats["max_clip"],
-                                                                                 p.currently_equipped_stats["current_ammo"],
-                                                                                 p.currently_equipped_stats["max_ammo"],))
+    print("Heath: %d/%d, Shield: %d/%d, ""Weapon: %s, Clip: %d/%d, Ammo: %d/%d" %
+          (p.health_current,
+           p.health,
+           p.shield_current,
+           p.shield, p.currently_equipped,
+           p.currently_equipped_stats["current_clip"],
+           p.currently_equipped_stats["max_clip"],
+           p.currently_equipped_stats["current_ammo"],
+           p.currently_equipped_stats["max_ammo"],))
 
 
 print("Welcome to Destiny Loot cave")
