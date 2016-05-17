@@ -174,6 +174,11 @@ def search_ground():
         p.player_status = ""
 
 
+def check_engrams():
+    print("You have: %d Green engrams, %d Blue Engrams and %d Purple Engrams" %
+          (inv.engram_green, inv.engram_blue, inv.engram_purple))
+
+
 # Throw grenade and check if you can throw
 def grenade():
     if p.grenade_timer == 0:
@@ -189,25 +194,26 @@ def grenade():
 def fire_weapon():
     print("Fire weapon not implemented yet")
 
+
 def check_ammo_equipping(weapon_type):
     if weapon_type == "primary":
         if p.primary_ammo > p.primary_clip_size:
             p.primary_clip = p.primary_clip_size
-            p.primary_ammo = p.primary_ammo - p.primary_clip_size
+            p.primary_ammo -= p.primary_clip_size
         elif p.primary_ammo <= p.primary_clip_size:
             p.primary_clip = p.primary_ammo
             p.primary_ammo = 0
     elif weapon_type == "special":
         if p.special_ammo > p.special_clip_size:
             p.special_clip = p.special_clip_size
-            p.special_ammo = p.special_ammo - p.special_clip_size
+            p.special_ammo -= p.special_clip_size
         elif p.special_ammo <= p.special_clip_size:
             p.special_clip = p.special_ammo
             p.special_ammo = 0
     elif weapon_type == "heavy":
         if p.heavy_ammo > p.heavy_clip_size:
             p.heavy_clip = p.heavy_clip_size
-            p.heavy_ammo = p.heavy_ammo - p.heavy_clip_size
+            p.heavy_ammo -= p.heavy_clip_size
         elif p.heavy_ammo <= p.heavy_clip_size:
             p.heavy_clip = p.heavy_ammo
             p.heavy_ammo = 0
@@ -233,6 +239,21 @@ def equip(weapon_type):
             print("Heavy Equip not implemented yet")
 
 
+# Function for keeping track of the player's current
+# location and able to go back to the previous location
+def player_status_change(change_status, status):
+    go_to = ""
+    come_from = ""
+    if change_status == "go":
+        come_from = p.player_status
+        go_to = status
+        p.player_status = go_to
+    elif change_status == "revert":
+        p.player_status = come_from
+        come_from = ""
+        go_to = ""
+
+
 # Swap between currently equipped weapons
 def swap_weapon(weapon_type):
     if weapon_type == "primary":
@@ -243,6 +264,7 @@ def swap_weapon(weapon_type):
         print("Swap Heavy not implemented")
 
 
+# List player's currently equipped gear
 def list_equipment():
     print("Primary: %s" % p.primary)
     print("Special: %s" % p.special)
